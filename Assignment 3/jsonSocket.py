@@ -21,7 +21,6 @@ class Server(object):
       print('3')  
       self.client.close()
     self.client, self.client_addr = self.socket.accept()
-    print (self.client_addr)
     return self
 
   def send(self, data):

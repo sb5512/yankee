@@ -39,6 +39,3 @@ formattedText = formattedText + \
 # Now we encode the string and send to client for printing
 server.send(formattedText.encode()).close()
 
-
-
-

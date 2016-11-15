@@ -1,16 +1,16 @@
 # Class for URL to parts
 class URLParts():
     def __init__(self):
-        print ('-- You are no Using Team Yankees URL SPLITTER -- ')
+        print ('-- You are now Using Team Yankees URL SPLITTER -- ')
         
     def splitURL(self, urlFromClient):
         
-        url = urlFromClient[:urlFromClient.find('\\r')]
-        
+        url = urlFromClient # [:urlFromClient.find('\\r')]
         PROTOCOLCHARS = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
         protocol = port = domain = subdomain = path = parameter = fragment = ''
         
         protocolEnd = url.find(':/')
+        
         if (protocolEnd > 0):
             for urlChar in url[:protocolEnd]:
                 if urlChar not in PROTOCOLCHARS:
@@ -22,9 +22,11 @@ class URLParts():
         if not protocol:
             restUrl = url
         
+        
         posPath = restUrl.find('/')
         posParameter = restUrl.find('?')
         posFrag = restUrl.find('#')
+        
         if posPath > 0:
             if posParameter > 0 and posFrag > 0:
                 domainSubPort = restUrl[:posPath]
@@ -61,20 +63,45 @@ class URLParts():
             path = domainSubPort + path
             domainSubPort = ''  
                
-        url[protocolEnd:].lstrip(':/')
+        if (domainSubPort.find(':') != -1):
+            port = domainSubPort[domainSubPort.find(':'):].lstrip(':')
+        else:
+            port = 'None'
         
-        subdomain = domainSubPort[:domainSubPort.find('.')]
-        domainPort = domainSubPort[domainSubPort.find('.'):].lstrip('.')
-        domain = domainPort[:domainPort.find(':')]
-        port = domainPort[domainPort.find(':'):].lstrip(':')
+        if (domainSubPort.find(':') > 0):
+            domainSub = domainSubPort[:domainSubPort.find(':')]
+        else:
+            domainSub = domainSubPort
         
-         
+        domain = [domainSub] 
+        while domainSub.find('.') != -1 :
+            domainSub = domainSub[domainSub.find('.'):].lstrip('.')
+            domain.append(domainSub)
+        
+        # Removing last element in domain list as all subdomain are domains.
+        subdomain = domain[:]
+        subdomain.pop()
+        domainString = ''
+        for domainVal in domain :
+            if domainVal != domain[-1]:
+                 domainString = domainString + domainVal + ' & '
+            else:
+                domainString = domainString + domainVal
+                
+        subDomainString = ''
+        for subDomainVal in subdomain :
+            if subDomainVal != subdomain[-1]:
+                subDomainString = subDomainString + subDomainVal + ' & '
+            else:
+                subDomainString = subDomainString + subDomainVal
+                
         returnURLParts ={}
-        returnURLParts['Protocol']= protocol
-        returnURLParts['Domain']= domain
-        returnURLParts['SubDomain']= subdomain
+        returnURLParts['Protocol'] = protocol
+        returnURLParts['Domain']= domainString
+        returnURLParts['SubDomain']= subDomainString
         returnURLParts['Port']= port
         returnURLParts['Path']= path
         returnURLParts['Parameter']= parameter
         returnURLParts['Fragment']= fragment
         return (returnURLParts)
+        
