@@ -24,6 +24,7 @@ class URLParts():
         
         
         posPath = restUrl.find('/')
+        print (posPath)
         posParameter = restUrl.find('?')
         posFrag = restUrl.find('#')
         
@@ -44,6 +45,7 @@ class URLParts():
             else:
                 domainSubPort = restUrl[:posPath]
                 path = restUrl[posPath:]
+                print (path)
         else:
             if posParameter > 0:
                 domainSubPort = restUrl[:posParameter]
@@ -59,8 +61,9 @@ class URLParts():
                 parameter = restUrl[posParameter+1:]
         if posFrag > 0:
             fragment = restUrl[posFrag+1:]
+        
         if not protocol:
-            path = domainSubPort + path
+            #path = domainSubPort + path
             domainSubPort = ''  
                
         if (domainSubPort.find(':') != -1):
@@ -103,5 +106,8 @@ class URLParts():
         returnURLParts['Path']= path
         returnURLParts['Parameter']= parameter
         returnURLParts['Fragment']= fragment
+        print (returnURLParts)
         return (returnURLParts)
         
+urlpar = URLParts()
+urlpar.splitURL("www.example.com/")
