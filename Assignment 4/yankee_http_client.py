@@ -9,22 +9,27 @@ def mainFunction(commandArguments , totalArg):
     if (totalArg > 1):
         downloadArbitaryFileWEB(commandArguments[1])
     else:
-        print ("\n Invaild URL -- Default URL shown below will be used : " + "\n http://west.uni-koblenz.de/en/studying/courses/ws1617/introduction-to-web-science \n\n")
-        downloadArbitaryFileWEB("http://west.uni-koblenz.de/en/studying/courses/ws1617/introduction-to-web-science")
-        #downloadArbitaryFileWEB("http://west.uni-koblenz.de/sites/default/files/favicon_0.ico")
+        print ("\n Invaild URL -- Default URL shown below will be used : " +  
+        "\n http://west.uni-koblenz.de/en/studying/courses/ws1617/" + 
+        "introduction-to-web-science \n\n")
+        downloadArbitaryFileWEB("http://west.uni-koblenz.de/en/studying/" +
+        "courses/ws1617/introduction-to-web-science")
         
-# downloads file by connected to the server and by receiving response. writes to a file 
+        
+#Connects to the server and receives response. writes to a file 
 def downloadArbitaryFileWEB(url , content_typeLength=14):
     #Connecting to Server and obtaining responses in Byte format                       
     responseInBytes = _clientConnectAndResponse(url)
     
     headerBytes = responseInBytes[:responseInBytes.find(b'\r\n\r\n')]
-    remainingBytes = responseInBytes[responseInBytes.find(b'\r\n\r\n'):].strip(b'\r\n\r\n')
+    remainingBytes = responseInBytes[responseInBytes.find(b'\r\n\r\n'):]\
+                                     .strip(b'\r\n\r\n')
 
     #Here we check if HTTP responses with 200 OK
     if (headerBytes.find(b'\r\n')) > 0 : 
-        if headerBytes[:headerBytes.find(b'\r\n')].decode(ENCODING).lower() != "http/1.1 200 ok":        
-            print ("Cannot determine if HTTP 200 OK. Further Processing wont occur")
+        if headerBytes[:headerBytes.find(b'\r\n')].decode(ENCODING).lower()\
+                       != "http/1.1 200 ok":        
+            print ("Cannot determine if HTTP 200 OK. Further Processing halts")
             return
     
     #Display Header
@@ -46,7 +51,7 @@ def downloadArbitaryFileWEB(url , content_typeLength=14):
         htmlToFile.close()
     
 
-#Helper function that handles socket connection and also returns response in Byte format
+#Helper function that handles socket connection and also gives response in bytes
 def _clientConnectAndResponse(url, timeout=10, receive_buffer=8096):
     parsed = urlparse(url)                                                     
     try:                                                                       
@@ -66,15 +71,17 @@ def _clientConnectAndResponse(url, timeout=10, receive_buffer=8096):
     responseInBytes = b''.join(r for r in response)
     return responseInBytes
 
-#takes headerBytes and checks if the response from the server was a image file or not
+#Takes headerBytes and checks if response from server was an image file or not
 def _checkIfImage (headerBytes, content_typeLength):
     if (headerBytes.find(b'Content-Type:') >= 0):
-        headerBytesAfterContentType = headerBytes[headerBytes.find(b'Content-Type:'):]
+        headerBytesAfterContentType = headerBytes[headerBytes.find\
+                                                  (b'Content-Type:'):]
     else:
         print ("DOESNOT HAVE A CONTENT TYPE")
         raise ValueError('No Content Type in header File')
     if (headerBytesAfterContentType.find(b';') >= 0):
-        fileFormat = headerBytesAfterContentType[:headerBytesAfterContentType.find(b';')]
+        fileFormat = headerBytesAfterContentType[:headerBytesAfterContentType\
+                                                 .find(b';')]
     else:
         fileFormat = headerBytesAfterContentType
     #print (fileFormat.decode(ENCODING))

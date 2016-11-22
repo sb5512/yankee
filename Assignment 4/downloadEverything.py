@@ -17,10 +17,14 @@ def parseHTML(filename , url, content_typeLength=14):
     with open(filename , 'r') as html:
         content = html.read()
         pat = re.compile (r'<img [^>]*src="([^"]+)')
-        pat2 = re.compile (r'<link [^>]*href="([^"]+)') # Here we also check from <link href and images inside them
+        # Here we also check\ from <link href and images inside them
+        pat2 = re.compile (r'<link [^>]*href="([^"]+)') 
         
         moreimages = pat2.findall(content) 
-        moreimagesFiltered = list(filter(lambda x: x.find('.ico') > 0  or x.find('.png') > 0  or x.find('.jpeg') > 0  , moreimages))
+        moreimagesFiltered = list(filter(lambda x:\
+                                         x.find('.ico') >= 0  or\
+                                         x.find('.png') >= 0  or\
+                                         x.find('.jpeg') >= 0  , moreimages))
         
         img = pat.findall(content)
 
@@ -36,7 +40,8 @@ def parseHTML(filename , url, content_typeLength=14):
             downloadArbitaryFileWEB(link) #perform download for that url
             
 
-# Helper function that returns the front part of the url that is to be appened to relative urls for valid image construction
+# Helper function that returns the front part of the url that is to be appened 
+#to relative urls for valid image construction
 def _getPartToAppendToRelativeImageURL(url):
     parsed = urlparse(url) 
     try:                                                                       
