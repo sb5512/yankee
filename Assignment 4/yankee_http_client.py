@@ -4,23 +4,23 @@ from urllib.parse import urlparse
 
 ENCODING = 'utf-8'
 
+#takes command line arguments and performs downloading files
 def mainFunction(commandArguments , totalArg):
     if (totalArg > 1):
         downloadArbitaryFileWEB(commandArguments[1])
     else:
         print ("\n Invaild URL -- Default URL shown below will be used : " + "\n http://west.uni-koblenz.de/en/studying/courses/ws1617/introduction-to-web-science \n\n")
         downloadArbitaryFileWEB("http://west.uni-koblenz.de/en/studying/courses/ws1617/introduction-to-web-science")
-        #downloadArbitaryFileWEB("http://west.uni-koblenz.de/sites/default/files/styles/personen_bild/public/_IMG0076-Bearbeitet_03.jpg")
-        #downloadArbitaryFileWEB("http://west.uni-koblenz.de/sites/default/files/styles/personen_bild/public/aboutus/team/persons/korok-sengupta.jpg?itok=O4OB0OyU")
-
+        #downloadArbitaryFileWEB("http://west.uni-koblenz.de/sites/default/files/favicon_0.ico")
+        
+# downloads file by connected to the server and by receiving response. writes to a file 
 def downloadArbitaryFileWEB(url , content_typeLength=14):
-    #Connecting to Server and obtaining responses in Byte format                        
+    #Connecting to Server and obtaining responses in Byte format                       
     responseInBytes = _clientConnectAndResponse(url)
     
     headerBytes = responseInBytes[:responseInBytes.find(b'\r\n\r\n')]
     remainingBytes = responseInBytes[responseInBytes.find(b'\r\n\r\n'):].strip(b'\r\n\r\n')
-    print (headerBytes)
-    #print (remainingBytes)
+
     #Here we check if HTTP responses with 200 OK
     if (headerBytes.find(b'\r\n')) > 0 : 
         if headerBytes[:headerBytes.find(b'\r\n')].decode(ENCODING).lower() != "http/1.1 200 ok":        
@@ -28,6 +28,7 @@ def downloadArbitaryFileWEB(url , content_typeLength=14):
             return
     
     #Display Header
+    print('\n')
     print (headerBytes.decode(ENCODING)) 
     
     #checking if the URL is for an image
@@ -45,7 +46,7 @@ def downloadArbitaryFileWEB(url , content_typeLength=14):
         htmlToFile.close()
     
 
-
+#Helper function that handles socket connection and also returns response in Byte format
 def _clientConnectAndResponse(url, timeout=10, receive_buffer=8096):
     parsed = urlparse(url)                                                     
     try:                                                                       
@@ -65,7 +66,7 @@ def _clientConnectAndResponse(url, timeout=10, receive_buffer=8096):
     responseInBytes = b''.join(r for r in response)
     return responseInBytes
 
-    
+#takes headerBytes and checks if the response from the server was a image file or not
 def _checkIfImage (headerBytes, content_typeLength):
     if (headerBytes.find(b'Content-Type:') >= 0):
         headerBytesAfterContentType = headerBytes[headerBytes.find(b'Content-Type:'):]
@@ -78,21 +79,13 @@ def _checkIfImage (headerBytes, content_typeLength):
         fileFormat = headerBytesAfterContentType
     #print (fileFormat.decode(ENCODING))
     fileFormatStrip = fileFormat.decode(ENCODING)[content_typeLength:]
-    #print (fileFormatStrip)
-    if fileFormatStrip.lower() in ('image/png', 'image/jpeg', 'image/gif'):
+   
+    if fileFormatStrip.lower().find('image/') >= 0:  
         return True
     return False
 
-    
-#Argument Handling
-totalArg = len(sys.argv)
-# Get the arguments list 
-commandArguments = str(sys.argv)
-# Print arguments
-print ("The total numbers of args passed to the script: %d " % totalArg)
-print ("Args list: %s " % commandArguments)
-
-mainFunction(commandArguments , totalArg)
-
-#geturl('http://west.uni-koblenz.de/en/studying/courses/ws1617/introduction-to-web-science')
-#geturl('http://west.uni-koblenz.de/sites/default/files/styles/personen_bild/public/_IMG0076-Bearbeitet_03.jpg')
+if __name__ == "__main__":
+     #Main Function call alongside command line Argument Handling
+     totalArg = len(sys.argv) 
+     commandArguments = sys.argv # Get the arguments list
+     mainFunction(commandArguments , totalArg)
