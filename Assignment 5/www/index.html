@@ -1,0 +1,43 @@
+<html>
+<head>
+    <title>
+        Abusing the HTTP protocol - Example
+    </title>
+</head>
+
+<body>
+    <h1> Display data from the Server </h1>
+    The following line changes on the servers command line input: <br>
+    <span id="response" style="color:red">
+        This will be replaced by messages from the server
+    </span>
+
+
+    <script language="javascript">
+        function checkUpdates() {
+            var XMLHttpRequestObject = false;
+            if (window.XMLHttpRequest) {
+                XMLHttpRequestObject = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {
+                XMLHttpRequestObject = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            if (XMLHttpRequestObject) {
+                var obj = document.getElementById("response");
+                XMLHttpRequestObject.open("GET", "GETINPUT");
+                XMLHttpRequestObject.onreadystatechange = function () {
+                    if (XMLHttpRequestObject.readyState == 4 &&
+                              XMLHttpRequestObject.status == 200) {
+                        obj.innerHTML = XMLHttpRequestObject.responseText;
+                    }
+                    
+                    checkUpdates();
+                }
+                XMLHttpRequestObject.send()
+            }
+        }
+        checkUpdates()
+
+    </script>
+
+</body>
+</html>
