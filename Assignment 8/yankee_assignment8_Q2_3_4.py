@@ -1,3 +1,6 @@
+# NOTE Please run the yankee_assignment8_Q1.py to get the necessary files
+# before running this file else Error in loading file will occur.
+
 import pickle
 import numpy as np
 import random
@@ -262,5 +265,31 @@ if __name__ == "__main__":
     performStatistical_significance_and_plot(randomarticles)
     
     
+    #time calculations
+    print ("Total documents in our dataset : " , \
+                         len(from_file_articles_with_totalwords.keys()))
     
+    import timeit
+    
+    def _template_func(setup, func):
+        """Create a timer function. Used if the "statement" is a callable."""
+        def inner(_it, _timer, _func=func):
+            setup()
+            _t0 = _timer()
+            for _i in _it:
+                retval = _func()
+            _t1 = _timer()
+            return _t1 - _t0, retval
+        return inner
+    
+    timeit._template_func = _template_func
+    
+    def foo():
+        return calculateCosineSimilarity("Germany" , "Europe")
+    
+    t = timeit.Timer(foo)
+    print("Time in seconds for evaluating Cosine Similarity : " \
+                                                   , t.timeit(number=1))
+    
+
     
